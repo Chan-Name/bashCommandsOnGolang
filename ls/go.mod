@@ -1,3 +1,3 @@
-module ls
+module gol/ls
 
 go 1.22.2
