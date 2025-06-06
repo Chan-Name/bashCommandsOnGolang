@@ -5,10 +5,6 @@ import (
 	"os"
 )
 
-func PrintInfo(name string) {
-	fmt.Printf("%s\n", name)
-}
-
 func GetAll(path string, flags []string) ([]string, error) {
 
 	for i := 0; i < len(flags); i++ {

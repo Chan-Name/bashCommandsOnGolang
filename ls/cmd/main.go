@@ -12,8 +12,7 @@ func main() {
 		log.Fatal("ERROR", err)
 	}
 
-	for i := 0; i < len(a); i++ {
-		include.PrintInfo(a[i])
-	}
+	cols := include.CalculateColumns(a, 2)
+	include.PrettyPrintColumns(a, cols)
 
 }
