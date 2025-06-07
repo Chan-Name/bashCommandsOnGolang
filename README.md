@@ -1,1 +1,1 @@
-Shell commands written on Golang. Fow now only ls exists
+Shell commands written on Golang. For now only ls exists
