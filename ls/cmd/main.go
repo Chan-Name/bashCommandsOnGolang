@@ -7,7 +7,12 @@ import (
 
 func main() {
 	path, flags := include.GetLaunchOptions()
-	a, err := include.GetAll(path, flags)
+
+	d, _ := include.CheckAllFiles(path)
+
+	v := include.New(d)
+
+	a, err := v.GetAll(path, flags)
 	if err != nil {
 		log.Fatal("ERROR", err)
 	}
