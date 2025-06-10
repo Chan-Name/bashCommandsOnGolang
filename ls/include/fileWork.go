@@ -13,35 +13,43 @@ func New(dir []os.DirEntry) *DirCont {
 	return &DirCont{dir: &dir}
 }
 
-func (d *DirCont) GetAll(path string, flags []string) ([]string, error) {
+func (d *DirCont) GetAll(path string, flags []string) error {
 
 	for i := 0; i < len(flags); i++ {
 		switch flags[i] {
 		case "-a":
-			files, err := d.CheckAllFilesOnly(path)
-			if err != nil {
-				return nil, err
+			if err := d.OutputFlagA(path); err != nil {
+				return err
 			}
-			return files, nil
+			return nil
 
 		case "-l":
 			d.ToUnhiddenFiles()
+
 			info, err := d.CheckInfo(path)
+			OutputFlagC(info)
 			if err != nil {
-				return nil, err
+				return err
 			}
-			return d.conv(info), nil
+			return nil
 
 		case "-la", "-al":
 			info, err := d.CheckInfo(path)
+			OutputFlagC(info)
 			if err != nil {
-				return nil, err
+				return err
 			}
-			return d.conv(info), nil
+			return nil
 		}
 	}
 
-	return d.CheckUnhiddenFilesOnly(path)
+	z, err := d.CheckUnhiddenFilesOnly(path)
+	if err != nil {
+		return err
+	}
+
+	OutputFlagC(z)
+	return nil
 }
 
 func (d *DirCont) conv(arrStr []string) []string {

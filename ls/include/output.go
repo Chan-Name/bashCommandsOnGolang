@@ -26,33 +26,37 @@ func maxFileNameLength(files []string) int {
 	return maxLen
 }
 
-func CalculateColumns(files []string, padding int) int {
+func OutputFlagC(files []string) {
 	width := getTerminalWidth()
 	maxLen := maxFileNameLength(files)
+	var cols int
 
-	if maxLen == 0 {
-		return 1
-	}
-
-	cols := (width + padding) / (maxLen + padding)
+	cols = (width + 2) / (maxLen + 2)
 	if cols <= 0 {
-		return 1
+		cols = 1
 	}
-	return cols
-}
 
-func PrettyPrintColumns(files []string, columns int) {
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 	defer w.Flush()
 
 	for i, file := range files {
 		fmt.Fprintf(w, "%s\t", file)
-		if (i+1)%columns == 0 {
+		if (i+1)%cols == 0 {
 			fmt.Fprintln(w)
 		}
 	}
 
-	if len(files)%columns != 0 {
+	if len(files)%cols != 0 {
 		fmt.Fprintln(w)
 	}
+}
+
+func (d *DirCont) OutputFlagA(path string) error {
+	info, err := d.CheckAllFilesOnly(path)
+	if err != nil {
+		return err
+	}
+
+	OutputFlagC(info)
+	return nil
 }

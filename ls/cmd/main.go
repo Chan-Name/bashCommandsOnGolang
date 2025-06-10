@@ -12,12 +12,9 @@ func main() {
 
 	v := include.New(d)
 
-	a, err := v.GetAll(path, flags)
+	err := v.GetAll(path, flags)
 	if err != nil {
 		log.Fatal("ERROR", err)
 	}
-
-	cols := include.CalculateColumns(a, 2)
-	include.PrettyPrintColumns(a, cols)
 
 }
