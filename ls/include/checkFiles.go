@@ -7,7 +7,16 @@ import (
 	"strings"
 )
 
-func CheckNameAndExt(dirEntry os.DirEntry) string {
+func CheckAllFiles(path string) ([]os.DirEntry, error) {
+	files, err := os.ReadDir(path)
+	if err != nil {
+		return nil, err
+	}
+
+	return files, nil
+}
+
+func (d *DirCont) CheckNameAndExt(dirEntry os.DirEntry) string {
 
 	if dirEntry.IsDir() {
 		return (fmt.Sprintf("🗁 %s", dirEntry.Name()))
@@ -35,38 +44,26 @@ func CheckNameAndExt(dirEntry os.DirEntry) string {
 	}
 }
 
-func CheckAllFiles(path string) ([]os.DirEntry, error) {
-	files, err := os.ReadDir(path)
-	if err != nil {
-		return nil, err
-	}
-
-	return files, nil
-}
-
-func CheckUnhiddenFiles(path string) ([]os.DirEntry, error) {
+func (d *DirCont) ToUnhiddenFiles() error {
 	var unHiddenFiles []os.DirEntry
 
-	files, err := os.ReadDir(path)
-	if err != nil {
-		return nil, err
-	}
-
-	for _, name := range files {
+	for _, name := range *d.dir {
 		if !strings.HasPrefix(name.Name(), ".") {
 			unHiddenFiles = append(unHiddenFiles, name)
 		}
 	}
-	return unHiddenFiles, nil
+
+	*d.dir = unHiddenFiles
+	return nil
 }
 
-func CheckInfo(path string, files []os.DirEntry) ([]string, error) {
+func (d *DirCont) CheckInfo(path string) ([]string, error) {
 
-	fullInfo := make([]string, len(files))
+	fullInfo := make([]string, len(*d.dir))
 
 	var fullPath string
 
-	for i, v := range files {
+	for i, v := range *d.dir {
 		fullPath = fmt.Sprintf("%s/%s", path, v.Name())
 
 		pers, err := os.Stat(fullPath)

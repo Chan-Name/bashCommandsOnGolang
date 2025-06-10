@@ -5,51 +5,50 @@ import (
 	"os"
 )
 
-func GetAll(path string, flags []string) ([]string, error) {
+type DirCont struct {
+	dir *[]os.DirEntry
+}
+
+func New(dir []os.DirEntry) *DirCont {
+	return &DirCont{dir: &dir}
+}
+
+func (d *DirCont) GetAll(path string, flags []string) ([]string, error) {
 
 	for i := 0; i < len(flags); i++ {
 		switch flags[i] {
 		case "-a":
-			files, err := CheckAllFilesOnly(path)
+			files, err := d.CheckAllFilesOnly(path)
 			if err != nil {
 				return nil, err
 			}
 			return files, nil
 
 		case "-l":
-			files, err := CheckUnhiddenFiles(path)
+			d.ToUnhiddenFiles()
+			info, err := d.CheckInfo(path)
 			if err != nil {
 				return nil, err
 			}
-
-			info, err := CheckInfo(path, files)
-			if err != nil {
-				return nil, err
-			}
-			return conv(info, files), nil
+			return d.conv(info), nil
 
 		case "-la", "-al":
-			files, err := CheckAllFiles(path)
+			info, err := d.CheckInfo(path)
 			if err != nil {
 				return nil, err
 			}
-
-			info, err := CheckInfo(path, files)
-			if err != nil {
-				return nil, err
-			}
-			return conv(info, files), nil
+			return d.conv(info), nil
 		}
 	}
 
-	return CheckUnhiddenFilesOnly(path)
+	return d.CheckUnhiddenFilesOnly(path)
 }
 
-func conv(arrStr []string, arrFiles []os.DirEntry) []string {
+func (d *DirCont) conv(arrStr []string) []string {
 	strS := make([]string, len(arrStr))
 
 	for i := 0; i < len(arrStr); i++ {
-		strS[i] = fmt.Sprintf("%s %s", arrStr[i], CheckNameAndExt(arrFiles[i]))
+		strS[i] = fmt.Sprintf("%s %s", arrStr[i], d.CheckNameAndExt((*d.dir)[i]))
 	}
 	return strS
 }
